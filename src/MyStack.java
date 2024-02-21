@@ -30,11 +30,9 @@ public class MyStack<Item> {
     }
 
     private void resize(int capacity) {
-        Item[] updated = (Item[])new Object[2*capacity];
+        Item[] updated = (Item[]) new Object[2*capacity];
 
-        for(int i = 0; i < items.length;i++) {
-            updated[i] = items[i];
-        }
+        System.arraycopy(items, 0, updated, 0, items.length);
         items = updated;
     }
 

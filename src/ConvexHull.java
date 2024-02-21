@@ -1,11 +1,12 @@
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class ConvexHull {
 
-
     public static void main(String[] args) {
 
-        Point[] points = new Point[17];
+        Point[] points = new Point[16];
 
         // testing values
         points[0] = new Point(3,4);
@@ -25,6 +26,7 @@ public class ConvexHull {
         points[14] = new Point(12,2);
         points[15] = new Point(12,5);
 
+
         LinkedList<Point> hulls = getHulls(points);
 
         for(Point P : hulls) {
@@ -35,65 +37,41 @@ public class ConvexHull {
 
     public static LinkedList<Point> getHulls(Point[] points) {
 
-        // sort by y
-        // insertion sort
-        for(int i = 0; i < points.length;i++) {
-            for(int j = i; j > 0;j--) {
-                if(points[j].y < points[j-1].y) exchange(points, j, j-1);
-                else break;
-            }
-        }
+        if(points == null || points.length < 3) throw new IllegalArgumentException();
 
-        // find lowest y
+        Arrays.sort(points, Comparator.comparingInt(p -> p.y));
 
         Point lowest = points[0];
+        Point referencePoint = new Point(lowest.x + 6, lowest.y);
 
-        // sort by angles to the lowest point
-        // insertion sort
-        for(int i = 1; i < points.length;i++) {
-            for(int j = i; j > 1;j--) {
-                if(getAngle(points[j], lowest, new Point(lowest.x + 6, lowest.y) ) <
-                        getAngle(points[j-1], lowest, new Point(lowest.x + 6, lowest.y))) {
-                    exchange(points,j, j-1);
-                } else break;
-            }
-        }
+        Arrays.sort(points, 1, points.length, Comparator.comparingDouble(p -> getAngle(p, lowest, referencePoint)));
 
-        // add them to stack (except first 3)
         MyStack<Point> stack = new MyStack<>();
-        LinkedList<Point> list = new LinkedList<>();
+        LinkedList<Point> hull = new LinkedList<>();
 
-        for(int i = points.length - 1;i > 2;i--) stack.push(points[i]);
+        hull.add(points[0]);
+        hull.add(points[1]);
+        hull.add(points[2]);
 
-        // add first 3 to LinkedList (for the first scenario of testing)
-        for(int i = 0; i < 3 ;i++) list.add(points[i]);
+        for (int i = points.length - 1; i > 2; i--) {
+            stack.push(points[i]);
+        }
 
-        // start testing
+        while (!stack.isEmpty()) {
+            Point a = hull.get(hull.size() - 3);
+            Point b = hull.get(hull.size() - 2);
+            Point c = hull.getLast();
 
-        boolean finished = false;
+            double area2 = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 
-        while (!finished) {
-
-            int N = list.size();
-            Point a = list.get(N - 3);
-            Point b = list.get(N - 2);
-            Point c = list.get(N - 1);
-
-            double area2 = (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x);
-
-            if(area2 > 0) {
-                if(stack.isEmpty()) {
-                    finished = true;
-                } else {
-                    list.add(stack.pop());
-                }
+            if (area2 > 0) {
+                hull.add(stack.pop());
             } else if (area2 < 0) {
-                list.remove(N - 2);
+                hull.removeLast();
             }
         }
 
-        // return result list
-        return list;
+        return hull;
     }
 
     private static void exchange(Point[] p, int a, int b) {
@@ -115,17 +93,5 @@ public class ConvexHull {
     private static double getLength(Point a, Point b) {
         return Math.sqrt(Math.pow( (b.x - a.x) , 2) + Math.pow((b.y - a.y) , 2));
     }
-
-    private static class Point {
-        public int x;
-        public int y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-
 
 }
