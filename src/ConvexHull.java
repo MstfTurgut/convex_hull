@@ -4,36 +4,25 @@ import java.util.LinkedList;
 
 public class ConvexHull {
 
-    public static void main(String[] args) {
-
-        Point[] points = new Point[16];
-
-        // testing values
-        points[0] = new Point(3,4);
-        points[1] = new Point(3,8);
-        points[2] = new Point(4,6);
-        points[3] = new Point(6,3);
-        points[4] = new Point(6,9);
-        points[5] = new Point(7,7);
-        points[6] = new Point(7,11);
-        points[7] = new Point(8,1);
-        points[8] = new Point(9,6);
-        points[9] = new Point(9,12);
-        points[10] = new Point(10,4);
-        points[11] = new Point(10,9);
-        points[12] = new Point(11,7);
-        points[13] = new Point(11,10);
-        points[14] = new Point(12,2);
-        points[15] = new Point(12,5);
-
-
-        LinkedList<Point> hulls = getHulls(points);
-
-        for(Point P : hulls) {
-            System.out.println(P.x + " " + P.y);
-        }
+    private static void exchange(Point[] p, int a, int b) {
+        Point swap = p[a];
+        p[a] = p[b];
+        p[b] = swap;
     }
 
+    private static double getAngle(Point a, Point b, Point c) {
+        double lengthC = getLength(a,b);
+        double lengthA = getLength(c,b);
+        double lengthB = getLength(c,a);
+
+        double resultRad = Math.acos((Math.pow(lengthA,2) + Math.pow(lengthC,2) - Math.pow(lengthB,2)) / (2*lengthA*lengthC));
+
+        return Math.toDegrees(resultRad);
+    }
+
+    private static double getLength(Point a, Point b) {
+        return Math.sqrt(Math.pow( (b.x - a.x) , 2) + Math.pow((b.y - a.y) , 2));
+    }
 
     public static LinkedList<Point> getHulls(Point[] points) {
 
@@ -74,24 +63,34 @@ public class ConvexHull {
         return hull;
     }
 
-    private static void exchange(Point[] p, int a, int b) {
-        Point swap = p[a];
-        p[a] = p[b];
-        p[b] = swap;
-    }
+    public static void main(String[] args) {
 
-    private static double getAngle(Point a, Point b, Point c) {
-        double lengthC = getLength(a,b);
-        double lengthA = getLength(c,b);
-        double lengthB = getLength(c,a);
+        Point[] points = new Point[16];
 
-        double resultRad = Math.acos((Math.pow(lengthA,2) + Math.pow(lengthC,2) - Math.pow(lengthB,2)) / (2*lengthA*lengthC));
+        // testing values
+        points[0] = new Point(3,4);
+        points[1] = new Point(3,8);
+        points[2] = new Point(4,6);
+        points[3] = new Point(6,3);
+        points[4] = new Point(6,9);
+        points[5] = new Point(7,7);
+        points[6] = new Point(7,11);
+        points[7] = new Point(8,1);
+        points[8] = new Point(9,6);
+        points[9] = new Point(9,12);
+        points[10] = new Point(10,4);
+        points[11] = new Point(10,9);
+        points[12] = new Point(11,7);
+        points[13] = new Point(11,10);
+        points[14] = new Point(12,2);
+        points[15] = new Point(12,5);
 
-        return Math.toDegrees(resultRad);
-    }
 
-    private static double getLength(Point a, Point b) {
-        return Math.sqrt(Math.pow( (b.x - a.x) , 2) + Math.pow((b.y - a.y) , 2));
+        LinkedList<Point> hulls = getHulls(points);
+
+        for(Point P : hulls) {
+            System.out.println(P.x + " " + P.y);
+        }
     }
 
 }
