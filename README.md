@@ -17,5 +17,5 @@ One key aspect of the Jarvis-March algorithm lies in the importance of sorting. 
 <br>
 <br>
 
-MstfTurgut  
+Mustafa Turgut   
 mstftrgt00@gmail.com
